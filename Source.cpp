@@ -5,6 +5,7 @@ using namespace std;
 
 int main()
 {
+	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	bool caps = false, shift = false;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
 	INPUT input;
@@ -39,6 +40,7 @@ int main()
 			cout << "OFF" << endl;
 		}
 		SetConsoleTextAttribute(console, 15);
+		int count = 0;
 		while (GetAsyncKeyState(20) == 0)
 		{
 			if (caps && !shift)
@@ -46,8 +48,27 @@ int main()
 				input.ki.wVk = 160;
 				SendInput(1, &input, sizeof(INPUT));
 				shift = true;
+				count = 32;
 			}
 			Sleep(32);
+			count++;
+			if (count == 48 && shift)
+			{
+				count = 0;
+				input.ki.wVk = 20;
+				input.ki.dwFlags = 0;
+				SendInput(1, &input, sizeof(INPUT));
+				input.ki.dwFlags = KEYEVENTF_KEYUP;
+				SendInput(1, &input, sizeof(INPUT));
+				Sleep(32);
+				GetAsyncKeyState(20);
+				input.ki.dwFlags = 0;
+				SendInput(1, &input, sizeof(INPUT));
+				input.ki.dwFlags = KEYEVENTF_KEYUP;
+				SendInput(1, &input, sizeof(INPUT));
+				input.ki.dwFlags = 0;
+				GetAsyncKeyState(20);
+			}
 		}
 		while (GetAsyncKeyState(20) != 0)
 		{
@@ -55,6 +76,7 @@ int main()
 		}
 		if (shift)
 		{
+			input.ki.wVk = 160;
 			input.ki.dwFlags = KEYEVENTF_KEYUP;
 			SendInput(1, &input, sizeof(INPUT));
 			input.ki.dwFlags = 0;
