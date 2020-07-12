@@ -5,6 +5,7 @@ using namespace std;
 
 int main()
 {
+	int cycles = 48;
 	ShowWindow(GetConsoleWindow(), SW_HIDE);
 	bool caps = false, shift = false;
 	HANDLE console = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -19,7 +20,7 @@ int main()
 		input.ki.dwFlags = KEYEVENTF_KEYUP;
 		SendInput(1, &input, sizeof(INPUT));
 		input.ki.dwFlags = 0;
-		input.ki.wVk = 160;
+		input.ki.wVk = 161;
 		SendInput(1, &input, sizeof(INPUT));
 		shift = true;
 		caps = true;
@@ -45,15 +46,20 @@ int main()
 		{
 			if (caps && !shift)
 			{
-				input.ki.wVk = 160;
+				input.ki.wVk = 161;
+				input.ki.dwFlags = 0;
 				SendInput(1, &input, sizeof(INPUT));
 				shift = true;
-				count = 32;
+				cycles = 16;
 			}
 			Sleep(32);
 			count++;
-			if (count == 48 && shift)
+			if (count == cycles && shift)
 			{
+				if (cycles < 48)
+				{
+					cycles += 8;
+				}
 				count = 0;
 				input.ki.wVk = 20;
 				input.ki.dwFlags = 0;
@@ -69,6 +75,12 @@ int main()
 				input.ki.dwFlags = 0;
 				GetAsyncKeyState(20);
 			}
+			if (GetAsyncKeyState(161) == 0 && caps)
+			{
+				input.ki.wVk = 161;
+				input.ki.dwFlags = 0;
+				SendInput(1, &input, sizeof(INPUT));
+			}
 		}
 		while (GetAsyncKeyState(20) != 0)
 		{
@@ -76,17 +88,16 @@ int main()
 		}
 		if (shift)
 		{
-			input.ki.wVk = 160;
+			input.ki.wVk = 161;
 			input.ki.dwFlags = KEYEVENTF_KEYUP;
 			SendInput(1, &input, sizeof(INPUT));
-			input.ki.dwFlags = 0;
-			input.ki.wVk = 20;
 			shift = false;
 		}
+		input.ki.wVk = 20;
+		input.ki.dwFlags = 0;
 		SendInput(1, &input, sizeof(INPUT));
 		input.ki.dwFlags = KEYEVENTF_KEYUP;
 		SendInput(1, &input, sizeof(INPUT));
-		input.ki.dwFlags = 0;
 		caps = !caps;
 	}
 }
