@@ -1,5 +1,11 @@
 # Caps Lock Shift  
   
+Discontinued; see my new project [Caps++](https://github.com/supsm/Caps) which does the same thing, but better.  
+  
+<br>  
+  
+<br>  
+  
 Makes it so that the caps lock key toggles shift.  
 When <kbd>Caps</kbd> is pressed, the program turns off `Caps Lock` and holds <kbd>Shift</kbd> until <kbd>Caps</kbd> is pressed again.  
   
